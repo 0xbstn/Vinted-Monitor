@@ -1,5 +1,5 @@
-const Database = require('easy-json-database');
 const config = require('./config.json')
+const Database = require('easy-json-database');
 const db = new Database('./db.json');
 if (!db.has('subscriptions')) db.set('subscriptions', []);
 
@@ -167,7 +167,7 @@ client.on('interactionCreate', (interaction) => {
 
     if (!interaction.isCommand()) return;
     if (!config.adminIDs.includes(interaction.user.id)) return void interaction.reply(`:x: Vous ne disposez pas des droits pour effectuer cette action !`);
-    
+
 
     switch (interaction.commandName) {
         case 'abonner': {
