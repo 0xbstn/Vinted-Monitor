@@ -146,15 +146,7 @@ client.on('ready', () => {
     });
     db.set('is_first_sync', true);
 
-    let idx = 0;
-    const donate = () => console.log(messages[ idx % 2 ]);
-    setTimeout(() => {
-        donate();
-    }, 3000);
-    setInterval(() => {
-        idx++;
-        donate();
-    }, 20000);
+ 
 
     sync();
     setInterval(sync, 15000);
