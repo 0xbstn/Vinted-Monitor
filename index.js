@@ -1,6 +1,7 @@
 const config = require('./config.json')
 const Database = require('easy-json-database');
 const db = new Database('./db.json');
+require("dotenv").config();
 if (!db.has('subscriptions')) db.set('subscriptions', []);
 
 const Discord = require('discord.js');
