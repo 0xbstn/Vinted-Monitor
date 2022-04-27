@@ -1,4 +1,4 @@
-const config = require('./config.json')
+
 const Database = require('easy-json-database');
 const db = new Database('./db.json');
 require("dotenv").config();
@@ -48,6 +48,7 @@ synchronizeSlashCommands(client, [
     }
 ], {
     debug: false,
+    
    
 }).then((stats) => {
     console.log(`🔁 Commandes mises à jour ! ${stats.newCommandCount} commandes créées, ${stats.currentCommandCount} commandes existantes\n`)
@@ -59,10 +60,13 @@ let lastFetchFinished = true;
 
 const syncSubscription = (sub) => {
     return new Promise((resolve) => {
+        
         vinted.search(sub.url, false, false, {
             per_page: '20'
         }).then((res) => {
+           
             if (!res.items) {
+                console.log(res)
                 console.log('Search done bug got wrong response. Promise resolved.', res);
                 resolve();
                 return;
@@ -70,23 +74,24 @@ const syncSubscription = (sub) => {
             const isFirstSync = db.get('is_first_sync');
             const lastItemTimestamp = db.get(`last_item_ts_${sub.id}`);
             const items = res.items
-                .sort((a, b) => new Date(b.created_at_ts).getTime() - new Date(a.created_at_ts).getTime())
+                .sort((a, b) => new Date(b.photo.high_resolution.timestamp).getTime() - new Date(a.photo.high_resolution.timestamp).getTime())
                 .filter((item) => !lastItemTimestamp || new Date(item.created_at_ts) > lastItemTimestamp);
 
             if (!items.length) return void resolve();
-
-            const newLastItemTimestamp = new Date(items[0].created_at_ts).getTime();
+        //    console.log(items[0])
+            const newLastItemTimestamp = new Date(items[0].photo.high_resolution.timestamp).getTime();
             if (!lastItemTimestamp || newLastItemTimestamp > lastItemTimestamp) {
                 db.set(`last_item_ts_${sub.id}`, newLastItemTimestamp);
             }
 
+      
             const itemsToSend = ((lastItemTimestamp && !isFirstSync) ? items.reverse() : [items[0]]);
-
+            
             for (let item of itemsToSend) {
                 const embed = new Discord.MessageEmbed()
                     .setTitle(item.title)
                     .setURL(`https://www.vinted.fr${item.path}`)
-                    .setImage(item.photos[0]?.url)
+                    .setImage(item.photo.url)
                     .setColor('#008000')
                     .setTimestamp(item.createdTimestamp)
                     .setFooter(`Article lié à la recherche : ${sub.id}`)
@@ -116,7 +121,8 @@ const syncSubscription = (sub) => {
 
             resolve();
         }).catch((e) => {
-            console.error('Search returned an error. Promise resolved.', e);
+            console.log(e)
+            console.error('Search returned an error. Promise resolved.');
             resolve();
         });
     });
@@ -147,12 +153,9 @@ client.on('ready', () => {
     });
     db.set('is_first_sync', true);
 
- 
-
     sync();
     setInterval(sync, 15000);
 
-    const { version } = require('./package.json');
    
 });
 
