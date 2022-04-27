@@ -6,6 +6,6 @@ test.js
 
 # Config
 
-
+.env
 # Database
 db.json
