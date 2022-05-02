@@ -73,13 +73,14 @@ const syncSubscription = (sub) => {
             }
             const isFirstSync = db.get('is_first_sync');
             const lastItemTimestamp = db.get(`last_item_ts_${sub.id}`);
+           
             const items = res.items
-                .sort((a, b) => new Date(b.photo.high_resolution.timestamp).getTime() - new Date(a.photo.high_resolution.timestamp).getTime())
-                .filter((item) => !lastItemTimestamp || new Date(item.created_at_ts) > lastItemTimestamp);
+                .sort((a, b) => b.photo.high_resolution.timestamp- a.photo.high_resolution.timestamp)
+                .filter((item) => !lastItemTimestamp || item.photo.high_resolution.timestamp > lastItemTimestamp);
 
             if (!items.length) return void resolve();
-        //    console.log(items[0])
-            const newLastItemTimestamp = new Date(items[0].photo.high_resolution.timestamp).getTime();
+         
+            const newLastItemTimestamp = items[0].photo.high_resolution.timestamp;
             if (!lastItemTimestamp || newLastItemTimestamp > lastItemTimestamp) {
                 db.set(`last_item_ts_${sub.id}`, newLastItemTimestamp);
             }
@@ -89,7 +90,7 @@ const syncSubscription = (sub) => {
             const itemsToSend = ((lastItemTimestamp && !isFirstSync) ? items.reverse() : [items[0]]);
             
             for (let item of itemsToSend) {
-
+            
                 const embed = new Discord.MessageEmbed()
                     .setTitle(item.title)
                     .setURL(item.url)
