@@ -90,7 +90,7 @@ const syncSubscription = (sub) => {
             const itemsToSend = ((lastItemTimestamp && !isFirstSync) ? items.reverse() : [items[0]]);
             
             for (let item of itemsToSend) {
-            
+                // console.log('Find Item')
                 const embed = new Discord.MessageEmbed()
                     .setTitle(item.title)
                     .setURL(item.url)
@@ -135,7 +135,7 @@ const sync = () => {
     if (!lastFetchFinished) return;
     lastFetchFinished = false;
 
-    console.log(`🤖 Synchronisation à Vinted...\n`);
+    // console.log(`🤖 Synchronisation à Vinted...\n`);
 
     const subscriptions = db.get('subscriptions');
     const promises = subscriptions.map((sub) => syncSubscription(sub));
