@@ -9,6 +9,6 @@
     "discord.js": "^13.1.0",
     "dotenv": "^16.0.0",
     "mongodb": "^4.5.0",
-    "vinted-api": "https://github.com/babouge/vinted-api-2.8.0.git"
+    "vinted-api": "github:bstnfr/vinted-api-2.8.0"
   }
 }
